@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<form action='/' method='post'>
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type='button' value='Preview' onclick='process()' />
+  <input type='submit' name='pdf' value='Generate PDF' />
+</form>
+
+<canvas id="canvas"></canvas>
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript" src="{% static 'js/draw.js' %}"></script>
+{% endblock %}
