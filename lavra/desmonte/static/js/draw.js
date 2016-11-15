@@ -1,4 +1,8 @@
 function process() {
+  // Change button name for canvas drawing mode
+  this.setAttribute("value", "Clear");
+
+  // Calculate drawing variables
   var prod = document.getElementById('id_producao').value; 
   var dens = document.getElementById('id_densidade').value; 
   var freq = document.getElementById('id_frequencia').value; 
@@ -7,26 +11,59 @@ function process() {
   var inclinacao = document.getElementById('id_inclinacao').value; 
   var p1 = document.getElementById('id_p1').value; 
   var p2 = document.getElementById('id_p2').value; 
-
   var vfogo = prod / (52 * dens * freq);
   var pmh = vfogo / (7 * turno);
-
   var d = selectDiameter(rcu, pmh);
   var h = selectHeight(d);
   var [b, s, t, j, lf] = selectGeom(rcu, d);
   var l = h / Math.cos(inclinacao * Math.PI / 90) + (1 - inclinacao / 100) * j;
-
   var vr = b * s * h;
   var n = vfogo / vr;
 
+  // Initialize drawing process
   var canvas = document.getElementById('canvas');
   var ctx = canvas.getContext('2d');
 
-  ctx.fillStyle = 'green';
-  ctx.fillRect(10, 10, 600, 300);
+  canvas.setAttribute("width", 600);
+  canvas.setAttribute("height", 300);
 
-  ctx.fillStyle = 'red';
-  ctx.fillRect(400, 400, 200, 100);
+  ctx.fillStyle = '#f0f0f0';
+  ctx.fillRect(0, 0, 600, 300);
+  
+  ctx.fillCircle = function (x, y, radius, fillColor) {
+    this.fillStyle = fillColor;
+    this.beginPath();
+    this.moveTo(x, y);
+    this.arc(x, y, radius, 0, Math.PI * 2, false);
+    this.fill();
+  };
+
+  canvas.onmousemove = function(e) {
+    var x = e.pageX - this.offsetLeft;
+    var y = e.pageY - this.offsetTop;
+
+    var div = document.getElementById("coords");
+    div.innerHTML = "x: " + x + " y: " + y;
+
+    if (this.isDrawing) {
+
+      var radius = 2;
+      var fillColor = 'black';
+      ctx.fillCircle(x, y, radius, fillColor);
+    }
+  };
+
+  canvas.onmousedown = function(e) {
+    this.isDrawing = true;
+  };
+
+  canvas.onmouseup = function(e) {
+    this.isDrawing = false;
+  };
+
+  canvas.onmouseout = function(e) {
+    this.isDrawing = false;
+  }
 }
 
 function selectDiameter(rcu, pmh) {
@@ -37,8 +74,7 @@ function selectDiameter(rcu, pmh) {
     var rcus = [60, 110, 270];
   }
 
-  var pair = {};
-  for (i = 0; i < rcus.length; i++) {
+  var pair = {}; for (i = 0; i < rcus.length; i++) {
     pair[rcus[i]] = ds[i];
   }
 
@@ -84,4 +120,3 @@ function selectGeom(rcu, d) {
 
   return result;
 }
-

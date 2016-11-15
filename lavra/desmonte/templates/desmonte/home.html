@@ -8,13 +8,19 @@
 <form action='/' method='post'>
   {% csrf_token %}
   {{ form.as_p }}
-  <input type='button' value='Preview' onclick='process()' />
   <input type='submit' name='pdf' value='Generate PDF' />
+  <input type='button' id='preview' value='Preview' />
 </form>
 
 <canvas id="canvas"></canvas>
+<div id="coords"></div>
 {% endblock %}
 
 {% block javascript %}
 <script type="text/javascript" src="{% static 'js/draw.js' %}"></script>
+<script>
+  document.getElementById("preview").onclick = process; 
+</script>
+
+
 {% endblock %}

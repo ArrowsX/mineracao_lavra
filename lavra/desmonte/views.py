@@ -1,24 +1,20 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from reportlab.pdfgen import canvas
-from reportlab.platypus import Table
 
 from .forms import InputForm
 
-from .helpers import process
+from .helpers import processed, export
 
 
 def home(request):
     if request.method == 'POST':
-        if 'pdf' in request.POST:
+        if 'pdf' in request.POST:  # Need attribute 'name' in <input>
             form = InputForm(request.POST)
             if form.is_valid():
                 data = form.cleaned_data
-                pdf = process(data)
-                return pdf
+                return export(processed(data))
         else:
             form = InputForm()
     else:
         form = InputForm()
 
-    return render(request, 'home.html', {'form': form})
+    return render(request, 'desmonte/home.html', {'form': form})
