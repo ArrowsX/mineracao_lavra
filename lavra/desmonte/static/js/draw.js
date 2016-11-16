@@ -21,11 +21,11 @@ function process() {
   var n = vfogo / vr;
 
   // Initialize drawing process
-  var canvas = document.getElementById('canvas');
-  var ctx = canvas.getContext('2d');
-
+  var canvas = document.getElementById("canvas");
   canvas.setAttribute("width", 600);
   canvas.setAttribute("height", 300);
+  // var canvas = document.getElementById('canvas');
+  var ctx = canvas.getContext('2d');
 
   ctx.fillStyle = '#f0f0f0';
   ctx.fillRect(0, 0, 600, 300);
@@ -42,7 +42,7 @@ function process() {
     var x = e.pageX - this.offsetLeft;
     var y = e.pageY - this.offsetTop;
 
-    var div = document.getElementById("coords");
+    var div = document.getElementById('coords');
     div.innerHTML = "x: " + x + " y: " + y;
 
     if (this.isDrawing) {
@@ -64,6 +64,7 @@ function process() {
   canvas.onmouseout = function(e) {
     this.isDrawing = false;
   }
+
 }
 
 function selectDiameter(rcu, pmh) {

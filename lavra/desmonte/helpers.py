@@ -1,4 +1,4 @@
-from math import fabs, cos, pi
+import math
 
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
@@ -21,12 +21,12 @@ def processed(data):
     d = select_diameter(rcu, pmh)
     h = select_height(d)
     b, s, t, j, lf = select_geom(rcu, d)
-    l = h / cos(inclinacao * pi / 90) + (1 - inclinacao / 100) * j
+    l = h / math.cos(inclinacao * math.pi / 90) + (1 - inclinacao / 100) * j
     lc = l - t - lf
 
-    cf = pf * pi * d**2 / 4000
+    cf = pf * math.pi * d**2 / 4000
     qf = cf * lf
-    cc = pc * pi * d**2 / 4000
+    cc = pc * math.pi * d**2 / 4000
     qc = cc * lc
     qt = qf + qc
 
@@ -35,36 +35,34 @@ def processed(data):
     r = vr / l
     ce = qt / vr
 
-    return [
-        ['producao', prod],
-        ['densidade', dens],
-        ['frequencia', freq],
-        ['turno', turno],
-        ['rcu', rcu],
-        ['inclinacao', inclinacao],
-        ['pc', pc],
-        ['pf', pf],
-        ['vfogo', vfogo],
-        ['pmh', pmh],
-        ['D diâmetro dos furos (cm ou pol)', d],
-        ['H altura da bancada (m)', h],
-        ['A afastamento (m)', b],
-        ['E espaçamento (m)', s],
-        ['t', t],
-        ['j', j],
-        ['lf', lf],
-        ['l', l],
-        ['lc', lc],
-        ['cf', cf],
-        ['qf', qf],
-        ['cc', cc],
-        ['qc', qc],
-        ['qt', qt],
-        ['vr', vr],
-        ['n', n],
-        ['r', r],
-        ['ce', ce],
-    ]
+    return {
+        'explosivo': [
+            ['pc', pc],
+            ['pf', pf],
+            ['lf', lf],
+            ['lc', lc],
+            ['cf', cf],
+            ['qf', qf],
+            ['cc', cc],
+            ['qc', qc],
+            ['qt', qt],
+            ['Razão de carga (kg/m³', ce],
+        ],
+        'geometria': [
+            ['Afastamento (m)', b],
+            ['Espaçamento (m)', s],
+            ['Altura da bancada (m)', h],
+            ['Diâmetro dos furos (mm)', d],
+            ['Inclinação dos furos (⁰)', inclinacao],
+            ['Comprimento dos furos (m)', l],
+            ['Subfuração (m)', j],
+            ['Tampão (m)', t],
+            ['Volume de rocha do fogo (m³)', vfogo],
+            ['Volume de rocha por furo (m³)', vr],
+            ['Número de furos', math.ceil(n)],
+            ['r', r],
+        ],
+    }
 
 
 def select_diameter(rcu, pmh):
@@ -75,7 +73,7 @@ def select_diameter(rcu, pmh):
         rcus = 60, 110, 270
 
     pair = dict(zip(rcus, ds))
-    calc = {fabs(value-pmh): value for value in pair.keys()}
+    calc = {math.fabs(value-pmh): value for value in pair.keys()}
     choosed_rcu = calc.get(min(calc.keys()))
     return pair.get(choosed_rcu)
 
